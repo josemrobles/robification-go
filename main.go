@@ -56,7 +56,7 @@ type Author struct {
 	Avatar string
 }
 
-func send(token string, external_id string, title string, label_color string, label_value string, fields []Field) {
+func Send(token string, external_id string, title string, label_color string, label_value string, fields []Field) {
 
 	url := "http://jrobles.net:1337/send"
 
