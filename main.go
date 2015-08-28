@@ -3,7 +3,6 @@ package robification
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -64,7 +63,7 @@ func Send(token string, external_id string, title string, label_color string, la
 
 	p, err := json.Marshal(payload)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(p))
