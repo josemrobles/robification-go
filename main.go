@@ -90,7 +90,7 @@ func buildPayload(flowToken string, threadID string, title string, message strin
 			Title:  title,
 			Fields: fields,
 			//Body:         "some optional messaging that can be added to the thread as a sub header",
-			External_Url: "https://github.com/josemrobles/robification-g",
+			External_Url: "https://github.com/josemrobles/robification-go",
 			Status: ThreadStatus{
 				Color: statusColor,
 				Value: statusValue,
