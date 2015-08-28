@@ -55,11 +55,11 @@ type Author struct {
 	Avatar string
 }
 
-func Send(token string, external_id string, title string, label_color string, label_value string, fields []Field) {
+func Send(token string, external_id string, title string, message string, label_color string, label_value string, fields []Field) {
 
 	url := "http://jrobles.net:1337/send"
 
-	payload := buildPayload(token, external_id, title, label_color, label_value, fields)
+	payload := buildPayload(token, external_id, title, message,label_color, label_value, fields)
 
 	p, err := json.Marshal(payload)
 	if err != nil {
@@ -76,7 +76,7 @@ func Send(token string, external_id string, title string, label_color string, la
 	defer resp.Body.Close()
 }
 
-func buildPayload(flowToken string, threadID string, title string, statusColor string, statusValue string, fields []Field) *Payload {
+func buildPayload(flowToken string, threadID string, title string, message string, statusColor string, statusValue string, fields []Field) *Payload {
 	fdData := &robification_fdThread{
 		Flow_Token: flowToken,
 		Event:      "activity",
@@ -84,7 +84,7 @@ func buildPayload(flowToken string, threadID string, title string, statusColor s
 			Name:   "robiBot",
 			Avatar: "http://img3.wikia.nocookie.net/__cb20150501175408/villains/images/b/be/Early.PNG",
 		},
-		Title:              title,
+		Title:              message,
 		External_Thread_Id: threadID,
 		Thread: Thread{
 			Title:  title,
