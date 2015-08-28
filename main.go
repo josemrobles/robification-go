@@ -82,8 +82,8 @@ func buildPayload(flowToken string, threadID string, title string, statusColor s
 		Flow_Token: flowToken,
 		Event:      "activity",
 		Author: Author{
-			Name:   "Wallace",
-			Avatar: "https://d2cxspbh1aoie1.cloudfront.net/avatars/local/87dee60e5d045f2fa8371a2f3f45b919a0e9cd0209e3689a46951411fef18681/120",
+			Name:   "robiBot",
+			Avatar: "http://img3.wikia.nocookie.net/__cb20150501175408/villains/images/b/be/Early.PNG",
 		},
 		Title:              title,
 		External_Thread_Id: threadID,
