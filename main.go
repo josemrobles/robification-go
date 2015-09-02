@@ -13,17 +13,10 @@ type Payload struct {
 type Target struct {
 	Destination_Type     string
 	Destination_Sub_Type string
-	Data                 robification_fdThread
+	Data                 fdDetailedThread
 }
 
-type robification_emailMessage struct {
-	From       string
-	Subject    string
-	Body       string
-	Recipients []string
-}
-
-type robification_fdThread struct {
+type fdDetailedThread struct {
 	Flow_Token         string
 	Event              string
 	Author             Author
@@ -59,12 +52,7 @@ func Send(token string, external_id string, title string, message string, label_
 
 	url := "http://jrobles.net:1337/send"
 
-	payload := buildPayload(token, external_id, title, message,label_color, label_value, fields)
-
-	p, err := json.Marshal(payload)
-	if err != nil {
-		panic(err)
-	}
+	p := buildPayload()
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(p))
 	req.Header.Set("Content-Type", "application/json")
@@ -76,8 +64,28 @@ func Send(token string, external_id string, title string, message string, label_
 	defer resp.Body.Close()
 }
 
-func buildPayload(flowToken string, threadID string, title string, message string, statusColor string, statusValue string, fields []Field) *Payload {
-	fdData := &robification_fdThread{
+func buildPayload() *Payload {
+
+	payload := &Payload{
+		Targets: []Target{
+			Target{
+				Destination_Type:     "flowdock",
+				Destination_Sub_Type: "new_thread",
+				Data:                 *fdData,
+			},
+		},
+	}
+
+	p, err := json.Marshal(payload)
+	if err != nil {
+		panic(err)
+	}
+
+	return p
+}
+
+func NewFdDetailedThread(flowToken string, threadID string, title string, message string, statusColor string, statusValue string, fields []Field) *Thread {
+	fdDetailedThread := &robification_fdThread{
 		Flow_Token: flowToken,
 		Event:      "activity",
 		Author: Author{
@@ -97,15 +105,5 @@ func buildPayload(flowToken string, threadID string, title string, message strin
 			},
 		},
 	}
-
-	payload := &Payload{
-		Targets: []Target{
-			Target{
-				Destination_Type:     "flowdock",
-				Destination_Sub_Type: "new_thread",
-				Data:                 *fdData,
-			},
-		},
-	}
-	return payload
+	return fdDetailedThread
 }
