@@ -1,77 +1,36 @@
 package robification
 
 import (
-	"bytes"
+	//"bytes"
 	"encoding/json"
-	"net/http"
+	//"net/http"
 )
 
-type Payload struct {
-	Targets []Target
-}
-
-type Target struct {
-	Destination_Type     string
-	Destination_Sub_Type string
-	Data                 fdDetailedThread
-}
-
-type fdDetailedThread struct {
-	Flow_Token         string
-	Event              string
-	Author             Author
-	Title              string
-	External_Thread_Id string
-	Thread             Thread
-}
-
-type Thread struct {
-	Title        string
-	Fields       []Field
-	Body         string
-	External_Url string
-	Status       ThreadStatus
-}
-
-type ThreadStatus struct {
-	Color string
-	Value string
-}
-
-type Field struct {
-	Label string
-	Value string
-}
-
-type Author struct {
-	Name   string
-	Avatar string
-}
-
 func Send(token string, external_id string, title string, message string, label_color string, label_value string, fields []Field) {
+	/*
+		url := "http://jrobles.net:1337/send"
 
-	url := "http://jrobles.net:1337/send"
+		p := buildPayload()
 
-	p := buildPayload()
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(p))
-	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
+		req, err := http.NewRequest("POST", url, bytes.NewBuffer(p))
+		req.Header.Set("Content-Type", "application/json")
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
+	*/
 }
 
-func buildPayload() *Payload {
+func buildPayload(fdData *fdDetailedThread) []byte {
 
 	payload := &Payload{
 		Targets: []Target{
 			Target{
 				Destination_Type:     "flowdock",
 				Destination_Sub_Type: "new_thread",
-				Data:                 *fdData,
+				//Data:                 *fdData,
 			},
 		},
 	}
@@ -84,8 +43,47 @@ func buildPayload() *Payload {
 	return p
 }
 
-func NewFdDetailedThread(flowToken string, threadID string, title string, message string, statusColor string, statusValue string, fields []Field) *Thread {
-	fdDetailedThread := &robification_fdThread{
+func NewEmail(from string, subject string, body string, recipients []string) *email {
+	email := &email{
+		From:       from,
+		Subject:    subject,
+		Body:       body,
+		Recipients: recipients,
+	}
+	return email
+}
+
+func NewFdChat(flowToken string, content string, externalUserName string) *fdChat {
+	chat := &fdChat{
+		Flow_Token:         flowToken,
+		Content:            content,
+		External_User_Name: externalUserName,
+	}
+	return chat
+}
+
+func NewSMS(from string, message string, recipients []string) *sms {
+	sms := &sms{
+		From:       from,
+		Message:    message,
+		Recipients: recipients,
+	}
+	return sms
+}
+
+func NewFdBasicThread(flowToken string, subject string, fromAddress string, source string, content string) *fdBasicThread {
+	fdBasicThread := &fdBasicThread{
+		Flow_Token:   flowToken,
+		Subject:      subject,
+		From_Address: fromAddress,
+		Source:       source,
+		Content:      content,
+	}
+	return fdBasicThread
+}
+
+func NewFdDetailedThread(flowToken string, threadID string, title string, message string, statusColor string, statusValue string, fields []Field) *fdDetailedThread {
+	fdDetailedThread := &fdDetailedThread{
 		Flow_Token: flowToken,
 		Event:      "activity",
 		Author: Author{
