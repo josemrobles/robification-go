@@ -4,4 +4,5 @@ A golang library which uses the RobiFication API to broadcast messages to Flowdo
 TBD:
 - multiple broadcast support.
 - Proper error handling
+- Refactor to use an Interface
 - tests!
