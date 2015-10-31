@@ -26,6 +26,8 @@ func Send(p *fdChat) error {
 	body, _ := ioutil.ReadAll(resp.Body)
 	res := apiResponse{}
 	json.Unmarshal([]byte(body), &res)
+
+	// Hard-coding one response for now...
 	if res.Messages[0].Status == "200 OK" {
 		return nil
 	}
