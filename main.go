@@ -3,109 +3,40 @@ package robification
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"net/http"
 )
 
-type Payload struct {
-	Targets []Target
-}
+func Send(p *fdChat) error {
+	url := "http://jrobles.net:1337/v1/flowdock/chat"
 
-type Target struct {
-	Destination_Type     string
-	Destination_Sub_Type string
-	Data                 robification_fdThread
-}
-
-type robification_emailMessage struct {
-	From       string
-	Subject    string
-	Body       string
-	Recipients []string
-}
-
-type robification_fdThread struct {
-	Flow_Token         string
-	Event              string
-	Author             Author
-	Title              string
-	External_Thread_Id string
-	Thread             Thread
-}
-
-type Thread struct {
-	Title        string
-	Fields       []Field
-	Body         string
-	External_Url string
-	Status       ThreadStatus
-}
-
-type ThreadStatus struct {
-	Color string
-	Value string
-}
-
-type Field struct {
-	Label string
-	Value string
-}
-
-type Author struct {
-	Name   string
-	Avatar string
-}
-
-func Send(token string, external_id string, title string, message string, label_color string, label_value string, fields []Field) {
-
-	url := "http://jrobles.net:1337/send"
-
-	payload := buildPayload(token, external_id, title, message,label_color, label_value, fields)
-
-	p, err := json.Marshal(payload)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(p.Content)))
 	if err != nil {
 		panic(err)
 	}
-
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(p))
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Token", p.Flow_Token)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	res := apiResponse{}
+	json.Unmarshal([]byte(body), &res)
+	if res.Messages[0].Status == "200 OK" {
+		return nil
+	}
+	return errors.New(res.Messages[0].Status)
+
 }
 
-func buildPayload(flowToken string, threadID string, title string, message string, statusColor string, statusValue string, fields []Field) *Payload {
-	fdData := &robification_fdThread{
+func NewFdChat(flowToken string, content string) *fdChat {
+	chat := &fdChat{
 		Flow_Token: flowToken,
-		Event:      "activity",
-		Author: Author{
-			Name:   "robiBot",
-			Avatar: "http://img3.wikia.nocookie.net/__cb20150501175408/villains/images/b/be/Early.PNG",
-		},
-		Title:              message,
-		External_Thread_Id: threadID,
-		Thread: Thread{
-			Title:  title,
-			Fields: fields,
-			//Body:         "some optional messaging that can be added to the thread as a sub header",
-			External_Url: "https://github.com/josemrobles/robification-go",
-			Status: ThreadStatus{
-				Color: statusColor,
-				Value: statusValue,
-			},
-		},
+		Content:    content,
 	}
-
-	payload := &Payload{
-		Targets: []Target{
-			Target{
-				Destination_Type:     "flowdock",
-				Destination_Sub_Type: "new_thread",
-				Data:                 *fdData,
-			},
-		},
-	}
-	return payload
+	return chat
 }
