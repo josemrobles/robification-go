@@ -3,19 +3,18 @@ package robification
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"net/http"
 )
 
-func Send(p *fdChat) {
+func Send(p *fdChat) error {
 	url := "http://jrobles.net:1337/v1/flowdock/chat"
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(p.Content)))
 	if err != nil {
 		panic(err)
 	}
-	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Token", p.Flow_Token)
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -27,7 +26,11 @@ func Send(p *fdChat) {
 	body, _ := ioutil.ReadAll(resp.Body)
 	res := apiResponse{}
 	json.Unmarshal([]byte(body), &res)
-	fmt.Println(res.Items[0].Name)
+	if res.Messages[0].Status == "200 OK" {
+		return nil
+	}
+	return errors.New(res.Messages[0].Status)
+
 }
 
 func NewFdChat(flowToken string, content string) *fdChat {

@@ -6,7 +6,7 @@ type fdChat struct {
 }
 
 type apiResponse struct {
-	Items []struct {
-		Name string `json:Name`
+	Messages []struct {
+		Status string `json:Status`
 	} `json:Items`
 }
