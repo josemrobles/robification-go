@@ -19,7 +19,6 @@ func main() {
 ```
 
 @TODO:
-- multiple broadcast support.
-- Proper error handling
-- Refactor to use an Interface
-- tests!
+- Concurrent messages and message types to multiple providers.
+- Better error handling
+- Tests
