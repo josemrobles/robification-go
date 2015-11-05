@@ -1,13 +1,9 @@
 package robification
 
-type fdChat struct {
-	Flow_Token string
-	Content    string
-}
-
-type slackChat struct {
-	Token   string
-	Content string
+type chatMessage struct {
+	Url   string
+	Token string
+	Text  string
 }
 
 type apiResponse struct {

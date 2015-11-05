@@ -8,45 +8,43 @@ import (
 	"net/http"
 )
 
-func Send(p *fdChat) error {
-	url := "http://jrobles.net:1337/v1/flowdock/chat"
+func Send(messages ...chatMessage) error {
+	for _, message := range messages {
+		req, err := http.NewRequest("POST", message.Url, bytes.NewBuffer([]byte(message.Text)))
+		if err != nil {
+			panic(err)
+		}
+		req.Header.Set("Token", message.Token)
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(p.Content)))
-	if err != nil {
-		panic(err)
+		body, _ := ioutil.ReadAll(resp.Body)
+		res := apiResponse{}
+		json.Unmarshal([]byte(body), &res)
+
+		// Hard-coding one response for now...
+		if res.Messages[0].Status == "200 OK" {
+			return nil
+		}
+		return errors.New(res.Messages[0].Status)
 	}
-	req.Header.Set("Token", p.Flow_Token)
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	body, _ := ioutil.ReadAll(resp.Body)
-	res := apiResponse{}
-	json.Unmarshal([]byte(body), &res)
-
-	// Hard-coding one response for now...
-	if res.Messages[0].Status == "200 OK" {
-		return nil
-	}
-	return errors.New(res.Messages[0].Status)
-
 }
 
-func NewFdChat(flowToken string, content string) *fdChat {
-	chat := &fdChat{
-		Flow_Token: flowToken,
-		Content:    content,
+func NewChatMessage(messageType string, token string, content string) *chatMessage {
+	var url string = ""
+	if messageType == "flowdock" {
+		url = "http://jrobles.net:1337/v1/flowdock/chat"
+	} else {
+		url = "http://jrobles.net:1337/v1/slack/chat"
 	}
-	return chat
-}
-
-func NewSlackChat(token string, content string) *slackChat {
-	chat := &slackChat{
-		Token:   token,
-		Content: content,
+	chat := &chatMessage{
+		Url:   url,
+		Token: token,
+		Text:  content,
 	}
 	return chat
 }
