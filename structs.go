@@ -5,6 +5,11 @@ type fdChat struct {
 	Content    string
 }
 
+type slackChat struct {
+	Token   string
+	Content string
+}
+
 type apiResponse struct {
 	Messages []struct {
 		Status string `json:Status`

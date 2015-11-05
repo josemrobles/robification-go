@@ -42,3 +42,11 @@ func NewFdChat(flowToken string, content string) *fdChat {
 	}
 	return chat
 }
+
+func NewSlackChat(token string, content string) *slackChat {
+	chat := &slackChat{
+		Token:   token,
+		Content: content,
+	}
+	return chat
+}
