@@ -3,13 +3,13 @@ package robification
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"net/http"
 )
 
 func Send(messages ...chatMessage) error {
-	for _, message := range messages {
+	doop := make([]apiResponses, len(messages))
+	for k, message := range messages {
 		req, err := http.NewRequest("POST", message.Url, bytes.NewBuffer([]byte(message.Text)))
 		if err != nil {
 			panic(err)
@@ -23,21 +23,28 @@ func Send(messages ...chatMessage) error {
 		defer resp.Body.Close()
 
 		body, _ := ioutil.ReadAll(resp.Body)
-		res := apiResponse{}
+		res := apiResponses{}
 		json.Unmarshal([]byte(body), &res)
 
-		// Hard-coding one response for now...
-		if res.Messages[0].Status == "200 OK" {
-			return nil
+		doop[k] = res
+		apiResponse(doop)
+		println(doop)
+	}
+	return nil
+}
+
+func apiResponse(oof []apiResponses) {
+	for _, response := range oof {
+		for _, meh := range response.Responses {
+			println(string(meh.Status))
 		}
-		return errors.New(res.Messages[0].Status)
 	}
 }
 
 func NewChatMessage(messageType string, token string, content string) *chatMessage {
 	var url string = ""
 	if messageType == "flowdock" {
-		url = "http://jrobles.net:1337/v1/flowdock/chat"
+		url = "http://jrobles.net:1337/v1/flowdock/chat!!!"
 	} else {
 		url = "http://jrobles.net:1337/v1/slack/chat"
 	}

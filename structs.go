@@ -6,8 +6,10 @@ type chatMessage struct {
 	Text  string
 }
 
-type apiResponse struct {
-	Messages []struct {
-		Status string `json:Status`
-	} `json:Items`
+type apiResponses struct {
+	Responses []response `json:Items`
+}
+
+type response struct {
+	Status string `json:Status`
 }
