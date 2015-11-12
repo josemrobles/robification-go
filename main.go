@@ -8,7 +8,7 @@ import (
 )
 
 func Send(messages ...chatMessage) error {
-	doop := make([]apiResponses, len(messages))
+	responses := make([]apiResponses, len(messages))
 	for k, message := range messages {
 		req, err := http.NewRequest("POST", message.Url, bytes.NewBuffer([]byte(message.Text)))
 		if err != nil {
@@ -26,17 +26,17 @@ func Send(messages ...chatMessage) error {
 		res := apiResponses{}
 		json.Unmarshal([]byte(body), &res)
 
-		doop[k] = res
-		apiResponse(doop)
-		println(doop)
+		responses[k] = res
+		apiResponse(responses)
+		println(responses)
 	}
 	return nil
 }
 
-func apiResponse(oof []apiResponses) {
-	for _, response := range oof {
-		for _, meh := range response.Responses {
-			println(string(meh.Status))
+func apiResponse(responses []apiResponses) {
+	for _, response := range responses {
+		for _, data := range response.Responses {
+			println(string(data.Status))
 		}
 	}
 }
