@@ -9,7 +9,7 @@ import (
 )
 
 func Send(p *fdChat) error {
-	url := "http://jrobles.net:1337/v1/flowdock/chat"
+	url := "http://api.robification.io:1337/v1/flowdock/chat"
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(p.Content)))
 	if err != nil {
