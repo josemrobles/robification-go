@@ -23,6 +23,3 @@ Todo:
 - Concurrent messages and message types to multiple providers.
 - Better error handling
 - Tests
-
-
-![alt tag](https://raw.githubusercontent.com/josemrobles/dev-configs/master/highres_181823992.jpeg)
